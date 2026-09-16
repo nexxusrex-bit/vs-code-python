@@ -1,9 +1,10 @@
 from datetime import date
 
-books = []  # will hold all books; each book = [id, title, author, status, borrower, due_date]
+books = []  # will hold all books; each book = [id, title, author, status, borrower, due_date, borrower_type]
+allowed_borrower_types = ["student", "teacher", "staff"]
 
 def add_book(books, book_id, title, author):
-    new_book = [book_id, title, author, "Available", "", ""]
+    new_book = [book_id, title, author, "Available", "", "", ""]
     books.append(new_book)
     return books
 
@@ -23,6 +24,10 @@ def view_books(books):
     if len(books) == 0:
         print("No books in the system yet.")
     else:
+        available_count = 0
+        borrowed_count = 0
+        missing_count = 0
+
         print("\n===== BOOK LIST =====")
         for book in books:
             print("ID:", book[0])
@@ -31,15 +36,26 @@ def view_books(books):
             print("Status:", book[3])
             print("Borrower:", book[4])
             print("Due Date:", book[5])
+            print("Borrower Type:", book[6])
             print("-----------------------")
 
-def borrow_book(books, book_id, borrower_name, due_date):
+            if book[3] == "Available":
+                available_count = available_count + 1
+            elif book[3] == "Borrowed":
+                borrowed_count = borrowed_count + 1
+            elif book[3] == "Missing":
+                missing_count = missing_count + 1
+
+        print("Total Available:", available_count, "| Borrowed:", borrowed_count, "| Missing:", missing_count)
+
+def borrow_book(books, book_id, borrower_name, borrower_type, due_date):
     for book in books:
         if book[0] == book_id:
             if book[3] == "Available":
                 book[3] = "Borrowed"
                 book[4] = borrower_name
                 book[5] = due_date
+                book[6] = borrower_type
                 return True
             else:
                 return False
@@ -52,6 +68,7 @@ def return_book(books, book_id):
                 book[3] = "Available"
                 book[4] = ""
                 book[5] = ""
+                book[6] = ""
                 return True
             else:
                 return False
@@ -144,16 +161,26 @@ while True:
             if borrower_name.lower() == "cancel":
                 print("Borrow Book cancelled.")
             else:
-                due_date = input("Enter due date (YYYY-MM-DD): ")
+                borrower_type_input = input("Are you a Student, Teacher, or Staff? (or type 'cancel' to go back): ").strip()
 
-                if len(due_date) == 10 and due_date[4] == "-" and due_date[7] == "-":
-                    success = borrow_book(books, book_id, borrower_name, due_date)
-                    if success:
-                        print("Book borrowed successfully!")
-                    else:
-                        print("Book not available or not found.")
+                while borrower_type_input.lower() not in allowed_borrower_types and borrower_type_input.lower() != "cancel":
+                    print("Sorry, only Students, Teachers, or Staff can borrow books.")
+                    borrower_type_input = input("Are you a Student, Teacher, or Staff? (or type 'cancel' to go back): ").strip()
+
+                if borrower_type_input.lower() == "cancel":
+                    print("Borrow Book cancelled.")
                 else:
-                    print("Invalid date format. Please use YYYY-MM-DD, example: 2026-01-01")
+                    borrower_type = borrower_type_input.capitalize()
+                    due_date = input("Enter due date (YYYY-MM-DD): ")
+
+                    if len(due_date) == 10 and due_date[4] == "-" and due_date[7] == "-":
+                        success = borrow_book(books, book_id, borrower_name, borrower_type, due_date)
+                        if success:
+                            print("Book borrowed successfully!")
+                        else:
+                            print("Book not available or not found.")
+                    else:
+                        print("Invalid date format. Please use YYYY-MM-DD, example: 2026-01-01")
     elif choice == "4":
         book_id = input("Enter Book ID to return: ")
         success = return_book(books, book_id)
