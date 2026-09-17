@@ -2,9 +2,8 @@ from datetime import date
 
 #books = [] # will hold all books; each book = [id, title, author, status, borrower, due_date, borrower_type]
 books = [
-    ["001", "Introduction to Programming", "Joshua Rex Balsomo", "Available", "", "", ""],
-    ["002", "Mathematics of Modern World", "Jet Marc Canonigo", "Borrowed", "John Doe", "2026-12-25", "student"],
-    ["003", "Python Basics", "Brylle Soberano", "Missing", "", "", ""]
+    ["101", "Computer Programming", "Joshua Rex Balsomo", "Available", "", "", ""],
+    ["102", "Mathematics of Modern World", "Jet Marc Canonigo", "Borrowed", "Brylle Soberano", "2026-11-15", "student"],
     ]
 
 allowed_borrower_types = ["student", "teacher", "staff"]
