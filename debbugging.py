@@ -2,6 +2,7 @@ from datetime import date
 
 books = []  # will hold all books; each book = [id, title, author, status, borrower, due_date, borrower_type]
 allowed_borrower_types = ["student", "teacher", "staff"]
+STAFF_PASSWORD = "staff123"
 
 def add_book(books, book_id, title, author):
     new_book = [book_id, title, author, "Available", "", "", ""]
@@ -36,7 +37,7 @@ def view_books(books):
             print("Status:", book[3])
             print("Borrower:", book[4])
             print("Due Date:", book[5])
-            print("Borrower Type:", book[6])
+            print("Borrower Status:", book[6])
             print("-----------------------")
 
             if book[3] == "Available":
@@ -106,6 +107,10 @@ def check_overdue(books):
             found = True
     if not found:
         print("No overdue or missing books.")
+        
+books = add_book(books, "101", "Python", "Joshua Rex Balsomo")
+books = add_book(books, "102", "Mathematics of Modern World", "Jet Marc Canonigo")
+books = add_book(books, "103", "Introduction to Programming", "Brylle Soberano")
 
 while True:
     print("===== LIBRARY MANAGEMENT SYSTEM =====")
@@ -121,30 +126,35 @@ while True:
     choice = input("Enter your choice: ")
 
     if choice == "1":
-        book_id = input("Enter Book ID (or type 'cancel' to go back): ").strip()
+        staff_password = input("Enter librarian staff password to add a book: ").strip()
 
-        while book_id == "" or (book_id.lower() != "cancel" and is_duplicate_id(books, book_id)):
-            if book_id == "":
-                print("Book ID cannot be blank.")
-            else:
-                print("That Book ID already exists. Please use a different one.")
+        if staff_password == STAFF_PASSWORD:
             book_id = input("Enter Book ID (or type 'cancel' to go back): ").strip()
 
-        if book_id.lower() == "cancel":
-            print("Add Book cancelled.")
-        else:
-            title = input("Enter Title: ").strip()
-            while title == "":
-                print("Title cannot be blank.")
+            while book_id == "" or (book_id.lower() != "cancel" and is_duplicate_id(books, book_id)):
+                if book_id == "":
+                    print("Book ID cannot be blank.")
+                else:
+                    print("That Book ID already exists. Please use a different one.")
+                book_id = input("Enter Book ID (or type 'cancel' to go back): ").strip()
+
+            if book_id.lower() == "cancel":
+                print("Add Book cancelled.")
+            else:
                 title = input("Enter Title: ").strip()
+                while title == "":
+                    print("Title cannot be blank.")
+                    title = input("Enter Title: ").strip()
 
-            author = input("Enter Author: ").strip()
-            while author == "":
-                print("Author cannot be blank.")
                 author = input("Enter Author: ").strip()
+                while author == "":
+                    print("Author cannot be blank.")
+                    author = input("Enter Author: ").strip()
 
-            books = add_book(books, book_id, title, author)
-            print("Book added successfully!")
+                books = add_book(books, book_id, title, author)
+                print("Book added successfully!")
+        else:
+            print("Incorrect password. Only library staff can add books.")
     elif choice == "2":
         view_books(books)
     elif choice == "3":
