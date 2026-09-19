@@ -1,11 +1,10 @@
 from datetime import date
 
-#books = [] # will hold all books; each book = [id, title, author, status, borrower, due_date, borrower_type]
+# books = [] will hold all books; each book = [id, title, author, status, borrower, due_date, borrower_type]
 books = [
-    ["101", "Computer Programming", "Joshua Rex Balsomo", "Available", "", "", ""],
-    ["102", "Mathematics of Modern World", "Jet Marc Canonigo", "Borrowed", "Brylle Soberano", "2026-11-15", "student"],
-    ]
-
+    ["001", "Computer Programming", "Joshua Rex Balsomo", "Available", "", "", ""],
+    ["002", "Mathematics of Modern World", "Jet Marc Canonigo", "Borrowed", "Brylle Soberano", "2026-11-15", "student"],
+]
 allowed_borrower_types = ["student", "teacher", "staff"]
 STAFF_PASSWORD = "staff123"
 
@@ -164,34 +163,43 @@ while True:
         if book_id.lower() == "cancel":
             print("Borrow Book cancelled.")
         else:
-            borrower_name = input("Enter your name (or type 'cancel' to go back): ").strip()
-            while borrower_name == "":
-                print("Name cannot be blank.")
-                borrower_name = input("Enter your name (or type 'cancel' to go back): ").strip()
+            status = get_book_status(books, book_id)
 
-            if borrower_name.lower() == "cancel":
-                print("Borrow Book cancelled.")
+            if status is None:
+                print("The book is not found or unavailable.")
+            elif status == "Borrowed":
+                print("This book is already borrowed.")
+            elif status == "Missing":
+                print("This book is marked Missing and cannot be borrowed.")
             else:
-                borrower_type_input = input("Are you a Student, Teacher, or Staff? (or type 'cancel' to go back): ").strip()
+                borrower_name = input("Enter your name (or type 'cancel' to go back): ").strip()
+                while borrower_name == "":
+                    print("Name cannot be blank.")
+                    borrower_name = input("Enter your name (or type 'cancel' to go back): ").strip()
 
-                while borrower_type_input.lower() not in allowed_borrower_types and borrower_type_input.lower() != "cancel":
-                    print("Sorry, only Students, Teachers, or Staff can borrow books.")
-                    borrower_type_input = input("Are you a Student, Teacher, or Staff? (or type 'cancel' to go back): ").strip()
-
-                if borrower_type_input.lower() == "cancel":
+                if borrower_name.lower() == "cancel":
                     print("Borrow Book cancelled.")
                 else:
-                    borrower_type = borrower_type_input.capitalize()
-                    due_date = input("Enter due date (YYYY-MM-DD): ")
+                    borrower_type_input = input("Are you a Student, Teacher, or Staff? (or type 'cancel' to go back): ").strip()
 
-                    if len(due_date) == 10 and due_date[4] == "-" and due_date[7] == "-":
-                        success = borrow_book(books, book_id, borrower_name, borrower_type, due_date)
-                        if success:
-                            print("Book borrowed successfully!")
-                        else:
-                            print("Book not available or not found.")
+                    while borrower_type_input.lower() not in allowed_borrower_types and borrower_type_input.lower() != "cancel":
+                        print("Sorry, only Students, Teachers, or Staff can borrow books.")
+                        borrower_type_input = input("Are you a Student, Teacher, or Staff? (or type 'cancel' to go back): ").strip()
+
+                    if borrower_type_input.lower() == "cancel":
+                        print("Borrow Book cancelled.")
                     else:
-                        print("Invalid date format. Please use YYYY-MM-DD, example: 2026-01-01")
+                        borrower_type = borrower_type_input.capitalize()
+                        due_date = input("Enter due date (YYYY-MM-DD): ")
+
+                        if len(due_date) == 10 and due_date[4] == "-" and due_date[7] == "-":
+                            success = borrow_book(books, book_id, borrower_name, borrower_type, due_date)
+                            if success:
+                                print("Book borrowed successfully!")
+                            else:
+                                print("Book not available or not found.")
+                        else:
+                            print("Invalid date format. Please use YYYY-MM-DD, example: 2026-01-01")
     elif choice == "4":
         book_id = input("Enter Book ID to return: ")
         success = return_book(books, book_id)
